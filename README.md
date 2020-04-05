@@ -16,6 +16,10 @@ e.g.
     "home_networks": ["firstwifi", "secondwifi", "otherwifi"]
 }
 ```
+Add an entry in your crontab.   In this example, it runs every 10 minutes and logs to a hidden folder .log in the user home.
+```
+*/10 * * * * /usr/local/bin/python3 /my/script/location/loc_update.py >> ~/.log/location-update.log 2>&1
+```
 
 # [ todo ]
 * dict with SSIDs  and their corresponding location
