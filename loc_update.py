@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
+import re
 
 def do_args():
     import argparse
@@ -9,8 +10,37 @@ def do_args():
     args = parser.parse_args()
     return args
 
+def execute(input):
+    import subprocess
+    import shlex
+    r = subprocess.run(shlex.split(input), capture_output=True)
+    return(r.stdout)
+   
+def fetch_ssid():
+    l_result = []
+    command = '/usr/sbin/ioreg -l' #| grep "IO80211SSID"'
+    registry = execute(command)
+    registry = registry.decode().split('\n')
+    for line in registry:
+        if 'IO80211SSID' in line:
+            wb = {}
+            params = re.search(r'.*\"(?P<ssid>[a-zA-Z0-9\-_]*)\"', line)
+            wb = params.groupdict()
+            return(wb['ssid'])
+
+def set_location(ssid):
+    if ssid in d_prefs['home_networks']:
+        location = d_prefs['macos_location']
+    else:
+        location = 'Automatic'
+    command = "/usr/sbin/scselect {}".format(location)
+    print(command)
+    result = execute("/usr/sbin/scselect {}".format(location))
+    print(result.decode)
+
 def main():
-    pass
+    ssid = fetch_ssid()
+    set_location(ssid)
 
 def set_prefs():
     import json
