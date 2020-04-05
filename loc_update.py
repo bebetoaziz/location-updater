@@ -33,10 +33,11 @@ def set_location(ssid):
         location = d_prefs['macos_location']
     else:
         location = 'Automatic'
-    command = "/usr/sbin/scselect {}".format(location)
-    print(command)
-    result = execute("/usr/sbin/scselect {}".format(location))
-    print(result.decode)
+    try:
+        result = execute("/usr/sbin/scselect {}".format(location))
+        report_change(location,ssid)
+    except AttributeError as e:
+        print('Failed:  {}'.format(e))
 
 def main():
     ssid = fetch_ssid()
@@ -49,6 +50,9 @@ def set_prefs():
         d_prefs = json.load(f)
     f.close()
     return d_prefs
+
+def report_change(location,ssid):
+    execute("logger -i -p daemon.notice -t set-hostname Location set to {}, based on SSID {}".format(location, ssid))
 
 if __name__ == '__main__':
     args = do_args()
